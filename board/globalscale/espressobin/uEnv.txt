@@ -1,0 +1,9 @@
+kernel_addr=0x2000000
+fdt_addr=0x1000000
+fdt_high=0xffffffffffffffff
+image_name=/boot/Image
+fdt_name=/boot/armada-3720-espressobin.dtb
+get_env=if ext4load mmc 0 $loadaddr /boot/uEnv.txt; then env import -t $loadaddr $filesize; if test -n ${uenvcmd}; then run uenvcmd; fi; fi
+get_images=ext4load mmc 0 $kernel_addr $image_name && ext4load mmc 0 $fdt_addr $fdt_name
+bootargs=console=ttyMV0,115200 earlycon=ar3700_uart,0xd0012000 root=/dev/mmcblk0p1 rw rootwait
+bootcmd=mmc dev 0; run get_env; if run get_images; then booti $kernel_addr - $fdt_addr; fi
